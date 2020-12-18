@@ -174,28 +174,22 @@ class Ui_MainWindow(object):
         self.sn = int(self.s1 + self.s2)
         self.en = int(self.e1 + self.e2)
 
-        self.dict_files = {}
-        flist_name = glob.glob('*.xlsx')
-        for i in flist_name:
-            m1 = re.findall('\d+', i)
-            m2 = int(m1[0]+m1[1])
-            self.dict_files[m2] = i
+        self.flist_total = glob.glob('*.')
 
-        flist_total_num = list(self.dict_files.keys())
-        self.flist_num = [i for i in flist_total_num if i >= self.sn and i <= self.en]
-        #self.flist = [dict_files[i] for i in flist_num]
-        #print(self.flist_num)
+        flist_total_num = [int(ll.split('.csv')[0]) for ll in self.flist_total]
+        flist_num = [i for i in flist_total_num if i >= self.sn and i <= self.en]
+        self.flist = [str(i) + '.csv' for i in flist_num]
 
         if self.sn > self.en:
             self.texting = '시작 주와 마지막 주를 다시 확인하세요. 시작 주는 마지막 주보다 빨라야 합니다. \n'
             self.statusbar.showMessage(self.texting)
             self.analyzing = False
-        elif not self.flist_num:
+        elif not self.flist:
             self.analyzing = False
             self.no_analyzing()
         else:
             self.texting = '{} {}부터 {} {}까지 총 {}개의 파일을 분석합니다. \n'.format(self.s01, self.s02, self.e01, self.e02,
-                                                                          len(self.flist_num))
+                                                                          len(self.flist))
             self.statusbar.showMessage(self.texting)
             self.analyzing = True
             self.do_analyzing()
@@ -219,17 +213,16 @@ class Ui_MainWindow(object):
         self.jangbilist = []
         self.safelist = []
         self.dininglist =[]
-        for file_num in self.flist_num:
-            file_num = str(file_num)
-            y = file_num[:-1]
-            w = file_num[-1]
-            mw = y + w
+        for file in self.flist:
+            y = file[:-5]
+            w = file[len(y):len(y) + 1]
 
+            mw = y + w
             col_name = ['name' + mw, 'total' + mw, 'night' + mw, 'jangbi' + mw, 'safe' + mw, 'dining' + mw]
             col_list += col_name
-            data = pd.read_excel(self.dict_files[int(file_num)], encoding='cp949',
+            data = pd.read_csv(file, encoding='cp949',
                                names=col_name,
-                               skiprows=84, usecols=[17, 28, 31, 34, 37, 40])
+                               skiprows=83, usecols=[16, 27, 30, 33, 36, 39])
 
             #data = data[:35].dropna()  # 35은 현동쌤까지.
             data = data[:40].dropna(how='all')  # 모든 행 값이 NaN 일때 그 해당 행을 삭제.
@@ -237,6 +230,7 @@ class Ui_MainWindow(object):
 
         self.rawappdata = self.rawappdata.replace([0.0, 0, '0'], np.nan) # NaN으로 만들어서 쉽게 제거할려고 설정
         self.rawappdata = self.rawappdata.dropna(how='all') #이름이 아예 없는 빈 행 제거
+
 
         self.namelist = [col_list[i] for i in range(len(col_list)) if i % 6 == 0]
         #        namelist = list(set(namelist))  # 중복제거
@@ -246,6 +240,7 @@ class Ui_MainWindow(object):
         self.safelist = [col_list[i] for i in range(len(col_list)) if i % 6 == 4]
         self.dininglist = [col_list[i] for i in range(len(col_list)) if i % 6 == 5]
 
+
         self.appdata2 = self.rawappdata[self.namelist] #왠지 모르지만, 아예 새로운 DataFrame을 만들어야 해서.
         self.appdata2.dropna(axis=1, inplace=True) # 이름 중에 NaN이 하나라도 있으면 그 열 제거
         self.appdata2.drop(self.appdata2.columns[1:], axis=1, inplace=True) # 여러개 중에 하나만 남기고 제거
@@ -253,15 +248,15 @@ class Ui_MainWindow(object):
         print('newnamelist', self.newnamelist)
 
         self.appdata = self.rawappdata.drop(self.namelist, axis=1)
+
         self.appdata = pd.concat([self.appdata2, self.appdata], axis=1, sort=False)
+
         self.appdata[self.totallist] = self.appdata[self.totallist].replace(np.nan, 0.)
         self.appdata[self.nightlist] = self.appdata[self.nightlist].replace(np.nan, 0.)
         #self.appdata[self.nightlist] = self.appdata[self.nightlist].astype(np.float)
         self.appdata[self.jangbilist] = self.appdata[self.jangbilist].replace(np.nan, 0.)
         self.appdata[self.safelist] = self.appdata[self.safelist].replace(np.nan, 0.)
         self.appdata[self.dininglist] = self.appdata[self.dininglist].replace(np.nan, 0.)
-
-
 
         # appdata.dropna(inplace=True) # data 중 하나라도 Nan이면, 이 행은 그냥 drop!!
         self.appdata = self.appdata.dropna()  # 위 function과 동일
@@ -290,7 +285,7 @@ class Ui_MainWindow(object):
 
         #        model = MyTableModel(self.appdata)  # appdata 전부다 넘김
         #        model = MyTableModel(self.appdata[self.namelist + self.sumlist])    # appdata의 name columns & sum columns
-        model = MyTableModel(self.rawappdata)  # appdata의 name columns만 넘김
+        model = MyTableModel(self.rawappdata[self.namelist])  # appdata의 name columns만 넘김
         self.tableview.setModel(model)
         self.tableview.show()
 
@@ -336,15 +331,11 @@ class Ui_MainWindow(object):
         global imagelist
         imagelist = []
 
-        with open('name_totalsum.txt', 'w') as f:
-            for kk in range(len(self.appdata[self.newnamelist[0]])):
-                f.write(f'{self.appdata[self.newnamelist[0]][kk:kk+1].values} : {self.appdata["totalsum"][kk:kk+1].values} \n')
-
         for i in range(len(titlelist)):
             fig = plt.figure(figsize=(14, 7))
             ax = fig.add_subplot(111)
             ax.grid(axis='y')
-            ax.bar(self.appdata[self.newnamelist[0]], plotlist[i],
+            ax.bar(self.appdata[self.namelist[0]], plotlist[i],
                    label='{} max: {}'.format(titlelist[i], maxval[i]))
             imagename = self.s1 + '월' + self.s2 + '주' + '_' + self.e1 + '월' + self.e2 + '주' + '_' + titlelist[i]
             print(imagename)
@@ -366,9 +357,7 @@ class Ui_MainWindow(object):
             else:
                 step_yticks = 5
                 print(step_yticks)
-
-            if minval[i] != 0. and maxval[i] != 0:
-                ax.set_yticks(range(math.floor(minval[i]), math.ceil(maxval[i]), step_yticks))
+            ax.set_yticks(range(math.floor(minval[i]), math.ceil(maxval[i]), step_yticks))
             # np.round(int(maxval[i],-1),
             ax.legend()
 

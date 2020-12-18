@@ -6,18 +6,15 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-# 주간근무량, 식당안내, 여맺마 근무량 삽입. revised on 2020.2.20.
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QAbstractTableModel, Qt
 from PyQt5.QtWidgets import QFileDialog
 import pandas as pd
 import numpy as np
 import glob, os
-from matplotlib import pyplot as plt, rcParams, font_manager
+from matplotlib import pyplot as plt, rcParams
 import math
 from PyQt5.QtGui import QPixmap
-import re
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -26,10 +23,9 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.btn_upload = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_upload.setGeometry(QtCore.QRect(660, 135, 130, 50))
+        self.btn_upload.setGeometry(QtCore.QRect(665, 130, 130, 50))
         font = QtGui.QFont()
-        font.setPointSize(15)
-        font.setBold(True)
+        font.setPointSize(18)
         self.btn_upload.setFont(font)
         self.btn_upload.setObjectName("btn_upload")
         self.start_mon = QtWidgets.QComboBox(self.centralwidget)
@@ -55,48 +51,42 @@ class Ui_MainWindow(object):
         self.lbl_start = QtWidgets.QLabel(self.centralwidget)
         self.lbl_start.setGeometry(QtCore.QRect(150, 20, 90, 20))
         font = QtGui.QFont()
-        font.setPointSize(13)
-        font.setBold(True)
+        font.setPointSize(18)
         self.lbl_start.setFont(font)
         self.lbl_start.setAlignment(QtCore.Qt.AlignCenter)
         self.lbl_start.setObjectName("lbl_start")
         self.lbl_end = QtWidgets.QLabel(self.centralwidget)
         self.lbl_end.setGeometry(QtCore.QRect(430, 20, 90, 20))
         font = QtGui.QFont()
-        font.setPointSize(13)
-        font.setBold(True)
+        font.setPointSize(18)
         self.lbl_end.setFont(font)
         self.lbl_end.setAlignment(QtCore.Qt.AlignCenter)
         self.lbl_end.setObjectName("lbl_end")
         self.btn_disp_image = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_disp_image.setGeometry(QtCore.QRect(660, 255, 130, 50))
+        self.btn_disp_image.setGeometry(QtCore.QRect(665, 250, 130, 50))
         font = QtGui.QFont()
-        font.setPointSize(15)
-        font.setBold(True)
+        font.setPointSize(18)
         self.btn_disp_image.setFont(font)
         self.btn_disp_image.setObjectName("btn_disp_image")
         self.tableview = QtWidgets.QTableView(self.centralwidget)
-        self.tableview.setGeometry(QtCore.QRect(10, 75, 643, 480))
+        self.tableview.setGeometry(QtCore.QRect(20, 70, 643, 471))
         self.tableview.setObjectName("tableview")
         self.btn_save_image = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_save_image.setGeometry(QtCore.QRect(660, 195, 130, 50))
+        self.btn_save_image.setGeometry(QtCore.QRect(665, 190, 130, 50))
         font = QtGui.QFont()
-        font.setPointSize(15)
-        font.setBold(True)
+        font.setPointSize(18)
         self.btn_save_image.setFont(font)
         self.btn_save_image.setObjectName("btn_save_image")
         self.btn_path = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_path.setGeometry(QtCore.QRect(660, 75, 130, 50))
+        self.btn_path.setGeometry(QtCore.QRect(665, 70, 130, 50))
         font = QtGui.QFont()
-        font.setPointSize(15)
-        font.setBold(True)
+        font.setPointSize(18)
         self.btn_path.setFont(font)
         self.btn_path.setObjectName("btn_path")
         self.btn_open_image = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_open_image.setGeometry(QtCore.QRect(660, 505, 130, 50))
+        self.btn_open_image.setGeometry(QtCore.QRect(665, 490, 130, 50))
         font = QtGui.QFont()
-        font.setPointSize(15)
-        font.setBold(True)
+        font.setPointSize(18)
         self.btn_open_image.setFont(font)
         self.btn_open_image.setObjectName("btn_open_image")
         MainWindow.setCentralWidget(self.centralwidget)
@@ -106,7 +96,7 @@ class Ui_MainWindow(object):
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(15)
         self.statusbar.setFont(font)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
@@ -119,7 +109,6 @@ class Ui_MainWindow(object):
         self.tableview.columnSpan(10, 20)
         self.tableview.setShowGrid(True)
         self.tableview.show()
-
         # 한글설정
         rcParams['font.sans-serif'] = 'Source Han Sans K'
         rcParams['font.weight'] = 'regular'
@@ -139,7 +128,7 @@ class Ui_MainWindow(object):
         self.btn_disp_image.clicked.connect(self.disp_image)
         self.btn_path.clicked.connect(self.find_path)
         self.btn_open_image.clicked.connect(self.open_image)
-        self.texting = 'welcome to this program \n'
+        self.texting = 'welcome to the fair world \n'
         self.statusbar.showMessage(self.texting)
 
         self.display_window = QtWidgets.QFrame()
@@ -151,7 +140,7 @@ class Ui_MainWindow(object):
         self.e01 = '-'
         self.e02 = '-'
 
-        #self.base_dir = '/Users/jsha/PycharmProjects/ohchoi/2020'
+        #self.base_dir = '/Users/jsha/PycharmProjects/ohchoi/2020/'
         self.base_dir = os.getcwd()
         self.filepath = self.base_dir
         self.image_dir = os.path.join(self.filepath, 'images')
@@ -166,44 +155,38 @@ class Ui_MainWindow(object):
         self.s02 = self.start_week.currentText()
         self.e01 = self.end_mon.currentText()
         self.e02 = self.end_week.currentText()
-        self.s1 = self.s01.rstrip('월')
-        self.s2 = self.s02.rstrip('주')
-        self.e1 = self.e01.rstrip('월')
-        self.e2 = self.e02.rstrip('주')
+        s1 = self.s01.rstrip('월')
+        s2 = self.s02.rstrip('주')
+        e1 = self.e01.rstrip('월')
+        e2 = self.e02.rstrip('주')
 
-        self.sn = int(self.s1 + self.s2)
-        self.en = int(self.e1 + self.e2)
+        self.sn = int(s1 + s2)
+        self.en = int(e1 + e2)
 
-        self.dict_files = {}
-        flist_name = glob.glob('*.xlsx')
-        for i in flist_name:
-            m1 = re.findall('\d+', i)
-            m2 = int(m1[0]+m1[1])
-            self.dict_files[m2] = i
+        self.flist_total = glob.glob('*.csv')
 
-        flist_total_num = list(self.dict_files.keys())
-        self.flist_num = [i for i in flist_total_num if i >= self.sn and i <= self.en]
-        #self.flist = [dict_files[i] for i in flist_num]
-        #print(self.flist_num)
+        flist_total_num = [int(ll.split('.csv')[0]) for ll in self.flist_total]
+        flist_num = [i for i in flist_total_num if i >= self.sn and i <= self.en]
+        self.flist = [str(i) + '.csv' for i in flist_num]
 
         if self.sn > self.en:
             self.texting = '시작 주와 마지막 주를 다시 확인하세요. 시작 주는 마지막 주보다 빨라야 합니다. \n'
             self.statusbar.showMessage(self.texting)
             self.analyzing = False
-        elif not self.flist_num:
+        elif not self.flist:
             self.analyzing = False
             self.no_analyzing()
         else:
             self.texting = '{} {}부터 {} {}까지 총 {}개의 파일을 분석합니다. \n'.format(self.s01, self.s02, self.e01, self.e02,
-                                                                          len(self.flist_num))
+                                                                          len(self.flist))
             self.statusbar.showMessage(self.texting)
             self.analyzing = True
             self.do_analyzing()
 
-
     def no_analyzing(self):
         self.texting = '{} {}부터 {} {}까지 분석할 파일이 없습니다. PATH를 확인하고, 시작주, 마지막주, Upload를 다시 수행하세요.\n'.format(self.s01,
-                                                                                                         self.s02,                                                                                                  self.e01,
+                                                                                                         self.s02,
+                                                                                                         self.e01,
                                                                                                          self.e02)
         self.statusbar.showMessage(self.texting)
         df = pd.DataFrame([])  # 빈 df를 넘겨서 테이블을 없앨려고 하는 것임. 계속 이 모델 방식을 써야할 듯.
@@ -212,56 +195,33 @@ class Ui_MainWindow(object):
         self.tableview.show()
 
     def do_analyzing(self):
-        self.rawappdata = pd.DataFrame([])
+        self.appdata = pd.DataFrame([])
         col_list = []
-        self.namelist = []
-        self.nightlist = []
-        self.jangbilist = []
-        self.safelist = []
-        self.dininglist =[]
-        for file_num in self.flist_num:
-            file_num = str(file_num)
-            y = file_num[:-1]
-            w = file_num[-1]
+
+        for file in self.flist:
+            y = file[:-5]
+            w = file[len(y):len(y) + 1]
+
             mw = y + w
-
-            col_name = ['name' + mw, 'total' + mw, 'night' + mw, 'jangbi' + mw, 'safe' + mw, 'dining' + mw]
+            col_name = ['name' + mw, 'total' + mw, 'night' + mw, 'jangbi' + mw]
             col_list += col_name
-            data = pd.read_excel(self.dict_files[int(file_num)], encoding='cp949',
+            data = pd.read_csv(file, encoding='cp949',
                                names=col_name,
-                               skiprows=84, usecols=[17, 28, 31, 34, 37, 40])
+                               skiprows=82, usecols=[16, 27, 30, 33])
 
-            #data = data[:35].dropna()  # 35은 현동쌤까지.
-            data = data[:40].dropna(how='all')  # 모든 행 값이 NaN 일때 그 해당 행을 삭제.
-            self.rawappdata = pd.concat([self.rawappdata, data], axis=1, sort=False)
+            data = data[:36].dropna()  # 36은 한솔쌤까지.
+            self.appdata = pd.concat([self.appdata, data], axis=1, sort=False)
 
-        self.rawappdata = self.rawappdata.replace([0.0, 0, '0'], np.nan) # NaN으로 만들어서 쉽게 제거할려고 설정
-        self.rawappdata = self.rawappdata.dropna(how='all') #이름이 아예 없는 빈 행 제거
-
-        self.namelist = [col_list[i] for i in range(len(col_list)) if i % 6 == 0]
+        self.namelist = [col_list[i] for i in range(len(col_list)) if i % 4 == 0]
         #        namelist = list(set(namelist))  # 중복제거
-        self.totallist = [col_list[i] for i in range(len(col_list)) if i % 6 == 1]
-        self.nightlist = [col_list[i] for i in range(len(col_list)) if i % 6 == 2]
-        self.jangbilist = [col_list[i] for i in range(len(col_list)) if i % 6 == 3]
-        self.safelist = [col_list[i] for i in range(len(col_list)) if i % 6 == 4]
-        self.dininglist = [col_list[i] for i in range(len(col_list)) if i % 6 == 5]
+        self.totallist = [col_list[i] for i in range(len(col_list)) if i % 4 == 1]
+        self.nightlist = [col_list[i] for i in range(len(col_list)) if i % 4 == 2]
+        self.jangbilist = [col_list[i] for i in range(len(col_list)) if i % 4 == 3]
 
-        self.appdata2 = self.rawappdata[self.namelist] #왠지 모르지만, 아예 새로운 DataFrame을 만들어야 해서.
-        self.appdata2.dropna(axis=1, inplace=True) # 이름 중에 NaN이 하나라도 있으면 그 열 제거
-        self.appdata2.drop(self.appdata2.columns[1:], axis=1, inplace=True) # 여러개 중에 하나만 남기고 제거
-        self.newnamelist = [self.appdata2.columns[0]] # 하나의 이름 열만 이제 새로 사용
-        print('newnamelist', self.newnamelist)
-
-        self.appdata = self.rawappdata.drop(self.namelist, axis=1)
-        self.appdata = pd.concat([self.appdata2, self.appdata], axis=1, sort=False)
-        self.appdata[self.totallist] = self.appdata[self.totallist].replace(np.nan, 0.)
-        self.appdata[self.nightlist] = self.appdata[self.nightlist].replace(np.nan, 0.)
-        #self.appdata[self.nightlist] = self.appdata[self.nightlist].astype(np.float)
-        self.appdata[self.jangbilist] = self.appdata[self.jangbilist].replace(np.nan, 0.)
-        self.appdata[self.safelist] = self.appdata[self.safelist].replace(np.nan, 0.)
-        self.appdata[self.dininglist] = self.appdata[self.dininglist].replace(np.nan, 0.)
-
-
+        self.appdata[self.totallist] = self.appdata[self.totallist].replace(np.nan, 0)
+        self.appdata[self.nightlist] = self.appdata[self.nightlist].replace(np.nan, 0)
+        self.appdata[self.nightlist] = self.appdata[self.nightlist].astype(np.float)
+        self.appdata[self.jangbilist] = self.appdata[self.jangbilist].replace(np.nan, 0)
 
         # appdata.dropna(inplace=True) # data 중 하나라도 Nan이면, 이 행은 그냥 drop!!
         self.appdata = self.appdata.dropna()  # 위 function과 동일
@@ -279,23 +239,17 @@ class Ui_MainWindow(object):
         self.appdata["totalsum"] = self.appdata[self.totallist].sum(axis=1)  # "totalsum"이라는 새로운 컬럼을 appdata에 추가
         self.appdata["nightsum"] = self.appdata[self.nightlist].sum(axis=1)  # "nightsum"이라는 새로운 컬럼을 appdata에 추가
         self.appdata["jangbisum"] = self.appdata[self.jangbilist].sum(axis=1)
-        self.appdata["safesum"] = self.appdata[self.safelist].sum(axis=1)
-        self.appdata["diningsum"] = self.appdata[self.dininglist].sum(axis=1)
-        self.appdata['onlyday'] = self.appdata.apply(lambda x: self.subtract(x['totalsum'], x['nightsum']), axis=1)
 
-        self.sumlist = ["totalsum", "nightsum", 'onlyday', "jangbisum", 'safesum', 'diningsum']  # 새로이 추가된 컬럼 이름을 리스트로 묶음
-        #print(self.appdata.loc[self.appdata["name11"]=='상록', ['dining11', 'dining12', 'diningsum']])
+        self.sumlist = ["totalsum", "nightsum", "jangbisum"]  # 새로이 추가된 컬럼 이름을 리스트로 묶음
+        print(self.appdata)
         #        print('행 수 = ', self.appdata.shape[0])
         #        print('열 수 = ', self.appdata.shape[1])
 
         #        model = MyTableModel(self.appdata)  # appdata 전부다 넘김
         #        model = MyTableModel(self.appdata[self.namelist + self.sumlist])    # appdata의 name columns & sum columns
-        model = MyTableModel(self.rawappdata)  # appdata의 name columns만 넘김
+        model = MyTableModel(self.appdata[self.namelist])  # appdata의 name columns만 넘김
         self.tableview.setModel(model)
         self.tableview.show()
-
-    def subtract(self, total, night):
-        return total - night
 
     def save_image(self):
         if self.analyzing is False:
@@ -318,16 +272,16 @@ class Ui_MainWindow(object):
         # 리스트를 이용하지 않고 컬럼 이름으로 바로 access 하는 방법: self.appdata[namelist0], self.appdata["totalsum"]
         # print(self.appdata[self.namelist + self.sumlist])
 
-        minval = [self.appdata["totalsum"].min(), self.appdata["nightsum"].min(), self.appdata['onlyday'].min(),
-                  self.appdata["jangbisum"].min(), self.appdata["safesum"].min(), self.appdata["diningsum"].min()]
-        maxval = [self.appdata["totalsum"].max(), self.appdata["nightsum"].max(), self.appdata['onlyday'].max(),
-                  self.appdata["jangbisum"].max(), self.appdata["safesum"].max(), self.appdata["diningsum"].max()]
+        minval = [self.appdata["totalsum"].min(), self.appdata["nightsum"].min(),
+                  self.appdata["jangbisum"].min()]
+        maxval = [self.appdata["totalsum"].max(), self.appdata["nightsum"].max(),
+                  self.appdata["jangbisum"].max()]
         plotlist = [self.appdata[i] for i in self.sumlist]
         # plotlist = [self.appdata["totalsum"], self.appdata["nightsum"], self.appdata["jangbisum"]
 
         xlab = '이름'
         ylab = '근무량'
-        titlelist = ['총 근무량', '야간 근무량', '주간 근무량', '장비 근무량', '안전교육 근무량', '식사-방송 근무량']
+        titlelist = ['총근무량', '야간근무량', '장비체험근무']
 
         if os.path.exists('images') is False:
             os.mkdir('images')
@@ -336,24 +290,17 @@ class Ui_MainWindow(object):
         global imagelist
         imagelist = []
 
-        with open('name_totalsum.txt', 'w') as f:
-            for kk in range(len(self.appdata[self.newnamelist[0]])):
-                f.write(f'{self.appdata[self.newnamelist[0]][kk:kk+1].values} : {self.appdata["totalsum"][kk:kk+1].values} \n')
-
         for i in range(len(titlelist)):
             fig = plt.figure(figsize=(14, 7))
             ax = fig.add_subplot(111)
             ax.grid(axis='y')
-            ax.bar(self.appdata[self.newnamelist[0]], plotlist[i],
+            ax.bar(self.appdata[self.namelist[0]], plotlist[i],
                    label='{} max: {}'.format(titlelist[i], maxval[i]))
-            imagename = self.s1 + '월' + self.s2 + '주' + '_' + self.e1 + '월' + self.e2 + '주' + '_' + titlelist[i]
-            print(imagename)
-
-            ax.set_title(imagename, size=15)
-            ax.set_ylabel(ylab, size=15)
-
+            imagename = self.s01 + self.s02 + '_' + self.e01 + self.e02 + '_' + titlelist[i]
+            ax.set_title(imagename)
             imagename = imagename + '.png'
-
+            # ax.set_xlabel(xlab, size=15)
+            ax.set_ylabel(ylab, size=15)
             ax.tick_params(axis='both', which='major', labelsize=12)
 
             diff_maxmin = math.ceil(maxval[i]) - math.floor(minval[i])
@@ -366,9 +313,7 @@ class Ui_MainWindow(object):
             else:
                 step_yticks = 5
                 print(step_yticks)
-
-            if minval[i] != 0. and maxval[i] != 0:
-                ax.set_yticks(range(math.floor(minval[i]), math.ceil(maxval[i]), step_yticks))
+            ax.set_yticks(range(math.floor(minval[i]), math.ceil(maxval[i]), step_yticks))
             # np.round(int(maxval[i],-1),
             ax.legend()
 
@@ -415,7 +360,7 @@ class Ui_MainWindow(object):
     def find_path(self):
         # filepath, _ = QFileDialog.getOpenFileName(MainWindow, "working_dir", os.getcwd(), "csv (*.csv)")
         self.filepath = QFileDialog.getExistingDirectory(MainWindow, caption='Select directory',
-                                                         directory=self.base_dir, options=QFileDialog.ShowDirsOnly)
+                                                         directory=self.base_dir)
         if self.filepath:
             os.chdir(self.filepath)
             self.texting = '파일 경로를 {}로 변경합니다.'.format(self.filepath)
@@ -435,7 +380,7 @@ class Ui_MainWindow(object):
                                                          directory=self.image_dir)
             if imagetuple[0]:
                 imagelist = list(imagetuple)[:][0]
-                self.texting = '{} 외 {} 개의 이미지를 불러옵니다.'.format(imagelist[0], len(imagelist))
+                self.texting = '{}를 포함한 {}개의 이미지를 불러옵니다.'.format(imagelist[0], len(imagelist))
                 self.statusbar.showMessage(self.texting)
             else:
                 self.texting = '불러온 이미지가 없습니다.'
@@ -449,7 +394,7 @@ class Ui_MainWindow(object):
         self.lbl_end.setText(_translate("MainWindow", "End Week"))
         self.btn_disp_image.setText(_translate("MainWindow", "Display"))
         self.btn_save_image.setText(_translate("MainWindow", "Save Image"))
-        self.btn_path.setText(_translate("MainWindow", "Set PATH"))
+        self.btn_path.setText(_translate("MainWindow", "PATH"))
         self.btn_open_image.setText(_translate("MainWindow", "Open Image"))
 
 class Ui_display_frame(object):
@@ -472,6 +417,13 @@ class Ui_display_frame(object):
 
         self.retranslateUi(display_frame)
         QtCore.QMetaObject.connectSlotsByName(display_frame)
+
+# 한글설정
+        rcParams['font.sans-serif'] = 'Source Han Sans K'
+        rcParams['font.weight'] = 'regular'
+        rcParams['axes.titlesize'] = 15
+        rcParams['ytick.labelsize'] = 12
+        rcParams['xtick.labelsize'] = 12
 
         self.btn_pre.clicked.connect(self.disp_pre)
         self.btn_post.clicked.connect(self.disp_post)

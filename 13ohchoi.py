@@ -261,8 +261,6 @@ class Ui_MainWindow(object):
         self.appdata[self.safelist] = self.appdata[self.safelist].replace(np.nan, 0.)
         self.appdata[self.dininglist] = self.appdata[self.dininglist].replace(np.nan, 0.)
 
-
-
         # appdata.dropna(inplace=True) # data 중 하나라도 Nan이면, 이 행은 그냥 drop!!
         self.appdata = self.appdata.dropna()  # 위 function과 동일
         # self.win_display.append(appdata[named])
@@ -336,15 +334,11 @@ class Ui_MainWindow(object):
         global imagelist
         imagelist = []
 
-        with open('name_totalsum.txt', 'w') as f:
-            for kk in range(len(self.appdata[self.newnamelist[0]])):
-                f.write(f'{self.appdata[self.newnamelist[0]][kk:kk+1].values} : {self.appdata["totalsum"][kk:kk+1].values} \n')
-
         for i in range(len(titlelist)):
             fig = plt.figure(figsize=(14, 7))
             ax = fig.add_subplot(111)
             ax.grid(axis='y')
-            ax.bar(self.appdata[self.newnamelist[0]], plotlist[i],
+            ax.bar(self.appdata[self.namelist[0]], plotlist[i],
                    label='{} max: {}'.format(titlelist[i], maxval[i]))
             imagename = self.s1 + '월' + self.s2 + '주' + '_' + self.e1 + '월' + self.e2 + '주' + '_' + titlelist[i]
             print(imagename)
