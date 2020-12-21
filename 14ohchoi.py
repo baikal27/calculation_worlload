@@ -178,7 +178,7 @@ class Ui_MainWindow(object):
         flist_name = glob.glob('*.xlsx')
         for i in flist_name:
             m1 = re.findall('\d+', i)
-            m2 = int(m1[0]+m1[1])
+            m2 = int(m1[1]+m1[2])
             self.dict_files[m2] = i
 
         flist_total_num = list(self.dict_files.keys())
