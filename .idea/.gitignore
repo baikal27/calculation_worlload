@@ -1,4 +1,8 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+<<<<<<< HEAD
 /.xlsx
+=======
+/*.xlsx
+>>>>>>> 91e01ba8133d6737bcb366b19ac077824341fe3a
